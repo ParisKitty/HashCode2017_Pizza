@@ -30,7 +30,7 @@ namespace HashCode_2017_Pizza
 
         public override string ToString()
         {
-            return "Slice from [" + StartRow + "]" + "[" + StartColumn + "] to [" + EndRow + "]" + "[" + EndColumn + "]";
+            return "Slice of ID " + ID + " from [" + StartRow + "]" + "[" + StartColumn + "] to [" + EndRow + "]" + "[" + EndColumn + "]";
         }
     }
 }

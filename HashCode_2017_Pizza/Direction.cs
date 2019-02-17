@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace HashCode_2017_Pizza
 {
-    enum Direction { LEFT, RIGHT, TOP, MINUS_ONE };
+    enum Direction { LEFT, RIGHT, TOP, MINUS_ONE, MINUS_ONE_LINE };
 }

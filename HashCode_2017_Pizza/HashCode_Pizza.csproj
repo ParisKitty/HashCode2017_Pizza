@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="input\big.in" />
     <None Include="input\small.in" />
     <None Include="input\medium.in" />
   </ItemGroup>
