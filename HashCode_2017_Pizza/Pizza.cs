@@ -23,44 +23,21 @@ namespace HashCode_2017_Pizza
         public bool needRecover;
         public bool isDesertZone = false;
 
-        public Pizza(string fileName)
+        public Pizza(int rowPerPiece, int columnPerPiece, int minIngredientPerSlice, int maxCellsPerSlice)
         {
-            using (StreamReader sr = new StreamReader(fileName))
-            {
-                LoadDataFrom(sr);
-            }
-        }
-
-        private void LoadDataFrom(StreamReader sr)
-        {
-            string line = sr.ReadLine();
-            string[] parts = line.Split(' ');
-            Rows = int.Parse(parts[0]);
-            Columns = int.Parse(parts[1]);
-            MinIngredientPerSlice = int.Parse(parts[2]);
-            MaxCellsPerSlice = int.Parse(parts[3]);
+            Rows = rowPerPiece;
+            Columns = columnPerPiece;
+            MinIngredientPerSlice = minIngredientPerSlice;
+            MaxCellsPerSlice = maxCellsPerSlice;
             Cells = new int[Rows, Columns];
             CutCells = new int[Rows, Columns]; // all cells are identified with 0 at the begining
-            for (int r = 0; r < Rows; r++)
-            {
-                line = sr.ReadLine();
-                for (int c = 0; c < Columns; c++)
-                {
-                    // tomato cell is 1
-                    if (line[c] == 'T')
-                    {
-                        Cells[r, c] = 1;
-                    }
-                    // mushroom cell is 0
-                }
-            }
+
         }
 
         public void Cut(int maxBackCount)
         {
-            using (StreamWriter sw = new StreamWriter("../../input/log" + DateTime.Now.ToString("MM-ddTHH-mm-ss")))
-            {
-                // TODO
+            //using (StreamWriter sw = new StreamWriter("../../input/log" + DateTime.Now.ToString("MM-ddTHH-mm-ss")))
+            //{
                 PizzaSlice cutSlice = null;
                 bool isNotEnd = true;
                 while (isNotEnd)
@@ -68,14 +45,14 @@ namespace HashCode_2017_Pizza
                     cutSlice = CutOneSlice();
                     if (cutSlice != null)
                     {
-                        sw.Write(cutSlice);
-                        sw.WriteLine();
+                        //sw.Write(cutSlice);
+                        //sw.WriteLine();
                         isNotEnd = RegisterCurrentSlice(cutSlice);
                     }
                     else if (isDesertZone)
                     {
-                        sw.Write("Desert zone ------- [" + CurrentStartRow + "][" + CurrentStartColumn + "]");
-                        sw.WriteLine();
+                        //sw.Write("Desert zone ------- [" + CurrentStartRow + "][" + CurrentStartColumn + "]");
+                        //sw.WriteLine();
                         Cells[CurrentStartRow, CurrentStartColumn] = -1;
                         isDesertZone = false;
                         continue;
@@ -83,38 +60,38 @@ namespace HashCode_2017_Pizza
                     else {
                         //sw.Write("Recut the slice of ID " + CurrentSliceID + " From Left Neigbour -------");
                         //sw.WriteLine();
-                        //cutSlice = RecutFromTheAboveSlice(Direction.LEFT);
-                        //if (cutSlice == null)
-                        //{
-                        //    RecoverAboveSlices();
-                        //    sw.Write("Recut the slice of ID " + CurrentSliceID + " From Top Neigbour -------");
-                        //    sw.WriteLine();
-                        //    cutSlice = RecutFromTheAboveSlice(Direction.TOP);
-                        //}
-                        //if (cutSlice == null)
-                        //{
-                        //    RecoverAboveSlices();
-                        //    sw.Write("Recut the slice of ID " + CurrentSliceID + " From Right Neigbour -------");
-                        //    sw.WriteLine();
-                        //    cutSlice = RecutFromTheAboveSlice(Direction.RIGHT);
-                        //}
-                        //if (cutSlice != null)
-                        //{
-                        //    sw.Write(cutSlice);
-                        //    sw.WriteLine();
-                        //    isNotEnd = RegisterCurrentSlice(cutSlice);
-                        //}
-                        //else
-                        //{
-                            //RecoverAboveSlices();
+                        cutSlice = RecutFromTheAboveSlice(Direction.LEFT);
+                        if (cutSlice == null)
+                        {
+                            RecoverAboveSlices();
+                            //sw.Write("Recut the slice of ID " + CurrentSliceID + " From Top Neigbour -------");
+                            //sw.WriteLine();
+                            cutSlice = RecutFromTheAboveSlice(Direction.TOP);
+                        }
+                        if (cutSlice == null)
+                        {
+                            RecoverAboveSlices();
+                            //sw.Write("Recut the slice of ID " + CurrentSliceID + " From Right Neigbour -------");
+                            //sw.WriteLine();
+                            cutSlice = RecutFromTheAboveSlice(Direction.RIGHT);
+                        }
+                        if (cutSlice != null)
+                        {
+                            //sw.Write(cutSlice);
+                            //sw.WriteLine();
+                            isNotEnd = RegisterCurrentSlice(cutSlice);
+                        }
+                        else
+                        {
+                            RecoverAboveSlices();
                             int count = 0;
                             while (cutSlice == null && count < maxBackCount)
                             {
-                                sw.Write("Recut the slice of ID " + CurrentSliceID + " From N-1 -------");
-                                sw.WriteLine();
+                                //sw.Write("Recut the slice of ID " + CurrentSliceID + " From N-1 -------");
+                                //sw.WriteLine();
                                 cutSlice = RecutFromTheAboveSlice(Direction.MINUS_ONE);
                                 count++;
-                            } ;
+                            }
 
                             if (count >= maxBackCount)
                             {
@@ -122,14 +99,14 @@ namespace HashCode_2017_Pizza
                                 isNotEnd = true;
                             }
                             else {
-                                sw.Write(cutSlice);
-                                sw.WriteLine();
+                                //sw.Write(cutSlice);
+                                //sw.WriteLine();
                                 isNotEnd = RegisterCurrentSlice(cutSlice);
                             }
-                        //}
+                        }
                     }
                 }
-            }
+            //}
         }
 
         private void RecoverAboveSlices()
@@ -348,6 +325,34 @@ namespace HashCode_2017_Pizza
             }
             int mushroomNbr = (endRow - startRow + 1) * (endColumn - startColumn + 1) - tomatoNbr;
             return tomatoNbr >= MinIngredientPerSlice && mushroomNbr >= MinIngredientPerSlice;
+        }
+
+        public int PrintResult(string outName) {
+            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(outName))
+            {
+                int desertZoneCount = 0;
+                for (int i = 0; i < Rows; i++)
+                {
+                    for (int j = 0; j < Columns; j++)
+                    {
+                        if (Cells[i, j] == -1)
+                        {
+                            desertZoneCount++;
+                            //sw.Write("-");
+                        }
+                        //else {
+                            //sw.Write(CutCells[i, j] % 10);
+                        //}
+                    }
+                    //sw.WriteLine();
+                }
+
+                sw.Write("-------------------------------------------------");
+                sw.WriteLine();
+                sw.Write(desertZoneCount + " zones of desert, nearly " + desertZoneCount * MaxCellsPerSlice + " cells not cut");
+                sw.WriteLine();
+                return desertZoneCount;
+            }
         }
     }
 }
